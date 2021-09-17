@@ -11,6 +11,7 @@ from functools import wraps
 from flask_gravatar import Gravatar
 import smtplib
 import os
+import re
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -29,7 +30,10 @@ gravatar = Gravatar(app,
 
 
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+URI = os.environ.get('DATABASE_URL')
+if URI.startswith("postgres://"):
+    URI = URI.replace("postgres://", "postgresql://", 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager()
